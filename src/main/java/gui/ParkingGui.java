@@ -238,7 +238,7 @@ public class ParkingGui extends JFrame {
         btn.setOpaque(true);
         btn.setContentAreaFilled(true);
         btn.setBorderPainted(false);
-        btn.setBackground(Color.WHITE);
+        btn.setBackground(platz.istFrei() ? Color.WHITE: new Color(195, 230, 230));
         btn.setPreferredSize(new Dimension(20, 20));
         btn.setToolTipText(String.format("Etage %d - Platz #%s", etage.getNummer(), platz.getNummer()));
 
