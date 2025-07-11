@@ -7,6 +7,9 @@ import service.ParkingService;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -15,27 +18,31 @@ public class ParkingGui extends JFrame {
 
     private final ParkingService service = ParkingService.erzeugeStandardParkhaus();
     private final JPanel parkhausPanel = new JPanel();
-
     private final JComboBox<Integer> cmbAmount = new JComboBox<>(new Integer[]{1, 2, 3, 4, 5, 10, 100});
     private final JCheckBox belegCheckBox = new JCheckBox("Beleg");
+    private final List<String> historie = new ArrayList<>();
+    private int buchungsnummer = 1;
 
     public ParkingGui() {
         setTitle("Intelligente Parkplatzsuche");
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setSize(1400, 500);
         setLocationRelativeTo(null);
-
         setLayout(new BorderLayout());
 
-        JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        JButton parkenButton = new JButton("Fahrzeuge einparken");
 
+        JButton btnPark = new JButton("Fahrzeuge einparken");
+        JButton btnHistorie = new JButton("Historie");
+
+        JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         topPanel.add(new JLabel("Anzahl Fahrzeuge:"));
         topPanel.add(cmbAmount);
-        topPanel.add(parkenButton);
+        topPanel.add(btnPark);
         topPanel.add(belegCheckBox);
+        topPanel.add(btnHistorie); // <<<<< NEU
 
-        parkenButton.addActionListener(this::handleEinparken);
+        btnPark.addActionListener(this::handleEinparken);
+        btnHistorie.addActionListener(e -> zeigeHistorieDialog()); // <<<<< NEU
 
         add(topPanel, BorderLayout.NORTH);
 
@@ -63,14 +70,24 @@ public class ParkingGui extends JFrame {
             return;
         }
 
+        historieAnlegen(belegtePlaetze);
         ansichtAktualisieren();
         zeigeBeleg(belegtePlaetze);
+    }
+
+    private void historieAnlegen(List<Parkplatz> belegtePlaetze) {
+        LocalDateTime jetzt = LocalDateTime.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd 'um' HH:mm:ss");
+        historie.add(String.format("Buchungsnummer: %s  | Anzahl: %s | Datum: %s Uhr ", buchungsnummer++, belegtePlaetze.size(),jetzt.format(formatter) ));
+        for (Parkplatz platz : belegtePlaetze) {
+            String eintrag = String.format("Platz #%s ", platz.getNummer());
+            historie.add(eintrag);
+        }
     }
 
     private void zeigeBeleg(List<Parkplatz> belegtePlaetze) {
         if (belegCheckBox.isSelected() && belegtePlaetze != null && !belegtePlaetze.isEmpty()) {
             StringBuilder sb = new StringBuilder("Neu belegte Parkplätze:\n");
-
             service.getParkhaus().getEtagen().stream()
                     .sorted(Comparator.comparingInt(Etage::getNummer).reversed())
                     .forEach(etage -> {
@@ -90,6 +107,23 @@ public class ParkingGui extends JFrame {
 
             JOptionPane.showMessageDialog(this, sb.toString(), "Neue belegte Parkplätze", JOptionPane.INFORMATION_MESSAGE);
         }
+    }
+
+    private void zeigeHistorieDialog() {
+        if (historie.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Noch keine Buchungen vorhanden.", "Historie", JOptionPane.INFORMATION_MESSAGE);
+            return;
+        }
+
+        JTextArea area = new JTextArea();
+        area.setEditable(false);
+        area.setFont(new Font("Monospaced", Font.PLAIN, 12));
+        for (String element : historie) {
+            area.append(element + "\n");
+        }
+        JScrollPane scrollPane = new JScrollPane(area);
+        scrollPane.setPreferredSize(new Dimension(500, 300));
+        JOptionPane.showMessageDialog(this, scrollPane, "Buchungshistorie", JOptionPane.INFORMATION_MESSAGE);
     }
 
     private void ansichtAktualisieren() {
