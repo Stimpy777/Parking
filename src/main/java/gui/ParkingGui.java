@@ -7,7 +7,7 @@ import service.ParkingService;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
-
+import java.util.Comparator;
 
 public class ParkingGui extends JFrame {
 
@@ -15,7 +15,7 @@ public class ParkingGui extends JFrame {
     private final JLabel statusLabel = new JLabel();
     private final JPanel parkhausPanel = new JPanel();
 
-    private final JComboBox<Integer> cmbAmount = new JComboBox<>(new Integer[]{1,2,3,4,5,10});
+    private final JComboBox<Integer> cmbAmount = new JComboBox<>(new Integer[]{1, 2, 3, 4, 5, 10});
 
     public ParkingGui() {
         setTitle("Intelligente Parkplatzsuche");
@@ -66,17 +66,19 @@ public class ParkingGui extends JFrame {
         parkhausPanel.removeAll();
         parkhausPanel.setLayout(new BoxLayout(parkhausPanel, BoxLayout.Y_AXIS));
 
-        for (Etage etage : service.getParkhaus().getEtagen()) {
-            JPanel etagenPanel = new JPanel(new GridLayout(1, 50, 2, 2));
-            etagenPanel.setBorder(BorderFactory.createTitledBorder("model.Etage " + etage.getNummer()));
+        service.getParkhaus().getEtagen().stream()
+                .sorted(Comparator.comparingInt(Etage::getNummer).reversed()) // Etagen absteigend sortieren
+                .forEach(etage -> {
+                    JPanel etagenPanel = new JPanel(new GridLayout(1, 50, 2, 2));
+                    etagenPanel.setBorder(BorderFactory.createTitledBorder("Etage " + etage.getNummer()));
 
-            for (Parkplatz platz : etage.getParkplaetze()) {
-                JButton platzButton = createPlatzButton(etage, platz);
-                etagenPanel.add(platzButton);
-            }
+                    for (Parkplatz platz : etage.getParkplaetze()) {
+                        JButton platzButton = createPlatzButton(etage, platz);
+                        etagenPanel.add(platzButton);
+                    }
 
-            parkhausPanel.add(etagenPanel);
-        }
+                    parkhausPanel.add(etagenPanel);
+                });
 
         long frei = service.getAnzahlFreierParkplaetze();
         long belegt = service.getAnzahlBelegterParkplaetze();
@@ -94,7 +96,7 @@ public class ParkingGui extends JFrame {
         platzButton.setBorderPainted(false);
         platzButton.setBackground(platz.istFrei() ? Color.GREEN : Color.RED);
         platzButton.setPreferredSize(new Dimension(20, 20));
-        platzButton.setToolTipText("Platz #" + platz.getNummer() + " auf model.Etage " + etage.getNummer());
+        platzButton.setToolTipText("Platz #" + platz.getNummer() + " auf Etage " + etage.getNummer());
 
         platzButton.addActionListener(ev -> {
             if (!platz.istFrei()) {
