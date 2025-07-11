@@ -14,7 +14,6 @@ import java.util.stream.Collectors;
 public class ParkingGui extends JFrame {
 
     private final ParkingService service = ParkingService.erzeugeStandardParkhaus();
-    private final JLabel statusLabel = new JLabel();
     private final JPanel parkhausPanel = new JPanel();
 
     private final JComboBox<Integer> cmbAmount = new JComboBox<>(new Integer[]{1, 2, 3, 4, 5, 10, 100});
@@ -35,7 +34,6 @@ public class ParkingGui extends JFrame {
         topPanel.add(cmbAmount);
         topPanel.add(parkenButton);
         topPanel.add(belegCheckBox);
-        topPanel.add(statusLabel);
 
         parkenButton.addActionListener(this::handleEinparken);
 
@@ -46,7 +44,7 @@ public class ParkingGui extends JFrame {
                 JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         add(scrollPane, BorderLayout.CENTER);
 
-        updateView();
+        ansichtAktualisieren();
         setResizable(false);
         setVisible(true);
     }
@@ -65,7 +63,7 @@ public class ParkingGui extends JFrame {
             return;
         }
 
-        updateView();
+        ansichtAktualisieren();
         zeigeBeleg(belegtePlaetze);
     }
 
@@ -94,31 +92,32 @@ public class ParkingGui extends JFrame {
         }
     }
 
-    private void updateView() {
+    private void ansichtAktualisieren() {
         parkhausPanel.removeAll();
         parkhausPanel.setLayout(new BoxLayout(parkhausPanel, BoxLayout.Y_AXIS));
 
         service.getParkhaus().getEtagen().stream()
                 .sorted(Comparator.comparingInt(Etage::getNummer).reversed())
                 .forEach(etage -> {
-                    JPanel etagenPanel = createEtagePanel(etage);
+                    JPanel etagenPanel = erstelleEtagenPanel(etage);
                     parkhausPanel.add(etagenPanel);
                 });
 
-        updateSatusLabel();
+        titelAktualisieren();
         parkhausPanel.revalidate();
         parkhausPanel.repaint();
     }
 
-    private void updateSatusLabel() {
+    private void titelAktualisieren() {
         long frei = service.getAnzahlFreierParkplaetze();
         long belegt = service.getAnzahlBelegterParkplaetze();
         double auslastung = belegt * 100.0 / (belegt + frei);
-        statusLabel.setText(String.format("Freie Plätze: %d | Belegte Plätze: %d | Auslastung: %.2f%%",
+        setTitle(String.format(
+                "Intelligente Parkplatzsuche | Freie Plätze: %4d | Belegte Plätze: %4d | Auslastung: %6.2f%%",
                 frei, belegt, auslastung));
     }
 
-    private JPanel createEtagePanel(Etage etage) {
+    private JPanel erstelleEtagenPanel(Etage etage) {
         JPanel etagenPanel = new JPanel(new GridLayout(1, 50, 2, 2));
         long frei = etage.getParkplaetze().stream().filter(Parkplatz::istFrei).count();
         long gesamt = etage.getParkplaetze().size();
@@ -127,27 +126,26 @@ public class ParkingGui extends JFrame {
         etagenPanel.setBorder(BorderFactory.createTitledBorder(titel));
 
         for (Parkplatz platz : etage.getParkplaetze()) {
-            JButton platzButton = createPlatzButton(etage, platz);
+            JButton platzButton = erzeugePlatzButton(etage, platz);
             etagenPanel.add(platzButton);
         }
         return etagenPanel;
     }
 
-    private JButton createPlatzButton(Etage etage, Parkplatz platz) {
-        JButton platzButton = new JButton();
-        platzButton.setOpaque(true);
-        platzButton.setBorderPainted(false);
-        platzButton.setBackground(platz.istFrei() ? Color.GREEN : Color.RED);
-        platzButton.setPreferredSize(new Dimension(20, 20));
-        platzButton.setToolTipText("Etage " + etage.getNummer() + "Platz #" + platz.getNummer());
-        platzButton.setToolTipText(String.format("Etage %d - Platz #%s", etage.getNummer(), platz.getNummer()));
-        platzButton.addActionListener(ev -> {
+    private JButton erzeugePlatzButton(Etage etage, Parkplatz platz) {
+        JButton btn = new JButton();
+        btn.setOpaque(true);
+        btn.setBorderPainted(false);
+        btn.setBackground(platz.istFrei() ? Color.GREEN : Color.RED);
+        btn.setPreferredSize(new Dimension(20, 20));
+        btn.setToolTipText(String.format("Etage %d - Platz #%s", etage.getNummer(), platz.getNummer()));
+        btn.addActionListener(ev -> {
             if (!platz.istFrei()) {
                 service.verlasseParkplatz(platz);
-                updateView();
+                ansichtAktualisieren();
             }
         });
-        return platzButton;
+        return btn;
     }
 
     public static void main(String[] args) {
