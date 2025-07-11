@@ -1,12 +1,18 @@
+package service;
+
 import lombok.Getter;
+import model.Etage;
+import model.Parkhaus;
+import model.Parkplatz;
+import model.ParkplatzStatus;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-public record ParkhausService(@Getter Parkhaus parkhaus) {
+public record ParkingService(@Getter Parkhaus parkhaus) {
 
-    public static ParkhausService erzeugeStandardParkhaus() {
+    public static ParkingService erzeugeStandardParkhaus() {
         List<Etage> etagen = new ArrayList<>();
         int etagenAnzahl = 7;
         int plaetzeProEtage = 50;
@@ -25,7 +31,7 @@ public record ParkhausService(@Getter Parkhaus parkhaus) {
         }
 
         Parkhaus parkhaus = new Parkhaus(etagen);
-        return new ParkhausService(parkhaus);
+        return new ParkingService(parkhaus);
     }
 
     public List<Parkplatz> parkeFahrzeuge(int anzahl) {

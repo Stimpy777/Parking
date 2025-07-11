@@ -1,5 +1,7 @@
 import static org.junit.jupiter.api.Assertions.*;
 
+import model.Parkplatz;
+import model.ParkplatzStatus;
 import org.junit.jupiter.api.Test;
 
 public class ParkplatzTest {

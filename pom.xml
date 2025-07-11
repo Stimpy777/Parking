@@ -63,7 +63,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>ParkhausGui</mainClass>
+                            <mainClass>gui.ParkingGui</mainClass>
                         </manifest>
                     </archive>
                 </configuration>

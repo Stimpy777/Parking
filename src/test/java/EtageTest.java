@@ -1,3 +1,6 @@
+import model.Etage;
+import model.Parkplatz;
+import model.ParkplatzStatus;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;

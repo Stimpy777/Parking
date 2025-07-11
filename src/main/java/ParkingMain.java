@@ -1,7 +1,9 @@
+import service.ParkingService;
+
 public class ParkingMain {
 
     public static void main(String[] args) {
-        ParkhausService service = ParkhausService.erzeugeStandardParkhaus();
+        ParkingService service = ParkingService.erzeugeStandardParkhaus();
 
         System.out.println("==> Initialzustand des Parkhauses:");
         printStatus(service);
@@ -33,7 +35,7 @@ public class ParkingMain {
         printStatus(service);
     }
 
-    private static void printStatus(ParkhausService service) {
+    private static void printStatus(ParkingService service) {
         long belegte = service.getAnzahlBelegterParkplaetze();
         long gesamt = service.getParkhaus().getEtagen().stream()
                 .mapToLong(etage -> etage.getParkplaetze().size())
@@ -41,7 +43,7 @@ public class ParkingMain {
         long frei = gesamt - belegte;
         double auslastung = ((double) belegte / gesamt) * 100;
 
-        System.out.println("-- Parkhaus-Status --");
+        System.out.println("-- model.Parkhaus-Status --");
         System.out.println("Belegte Plätze : " + belegte);
         System.out.println("Freie Plätze   : " + frei);
         System.out.printf("Auslastung     : %.2f %%\n", auslastung);

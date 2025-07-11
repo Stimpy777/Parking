@@ -1,3 +1,7 @@
+import model.Etage;
+import model.Parkhaus;
+import model.Parkplatz;
+import model.ParkplatzStatus;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -9,7 +13,7 @@ public class ParkhausTest {
 
     @Test
     public void testSucheParkplaetzeMitErfolg() {
-        // Etage 1 – vollständig belegt
+        // model.Etage 1 – vollständig belegt
         List<Parkplatz> etage1Plaetze = new ArrayList<>();
         for (int i = 0; i < 5; i++) {
             Parkplatz platz = new Parkplatz(i, 10 - i); // verschiedene Entfernungen
@@ -17,7 +21,7 @@ public class ParkhausTest {
             etage1Plaetze.add(platz);
         }
 
-        // Etage 2 – einige freie, drei zusammenhängende in der Mitte
+        // model.Etage 2 – einige freie, drei zusammenhängende in der Mitte
         List<Parkplatz> etage2Plaetze = new ArrayList<>();
         for (int i = 0; i < 5; i++) {
             Parkplatz platz = new Parkplatz(i, 5 - i);

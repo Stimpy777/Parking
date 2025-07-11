@@ -1,18 +1,23 @@
+import model.Etage;
+import model.Parkhaus;
+import model.Parkplatz;
+import model.ParkplatzStatus;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import service.ParkingService;
 
 import java.util.List;
 import java.util.stream.IntStream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class ParkhausServiceTest {
+public class ParkingServiceTest {
 
-    private ParkhausService service;
+    private ParkingService service;
 
     @BeforeEach
     public void setUp() {
-        service = ParkhausService.erzeugeStandardParkhaus();
+        service = ParkingService.erzeugeStandardParkhaus();
     }
 
     @Test
@@ -25,7 +30,7 @@ public class ParkhausServiceTest {
         int gesamtParkplaetze = 0;
         for (Etage etage : etagen) {
             List<Parkplatz> plaetze = etage.getParkplaetze();
-            assertEquals(50, plaetze.size(), "Jede Etage sollte genau 50 Parkplaetze haben.");
+            assertEquals(50, plaetze.size(), "Jede model.Etage sollte genau 50 Parkplaetze haben.");
             long freiePlaetze = plaetze.stream().filter(Parkplatz::istFrei).count();
             assertEquals(50, freiePlaetze, "Alle Parkplaetze sollten initial frei sein.");
             gesamtParkplaetze += plaetze.size();
@@ -38,7 +43,7 @@ public class ParkhausServiceTest {
     public void testeVollbelegung() {
         IntStream.range(0, 350).forEach(i -> {
             List<Parkplatz> plaetze = service.parkeFahrzeuge(1);
-            assertEquals(1, plaetze.size(), "Es sollte genau 1 Parkplatz zugewiesen werden.");
+            assertEquals(1, plaetze.size(), "Es sollte genau 1 model.Parkplatz zugewiesen werden.");
         });
 
         assertEquals(350, service.getAnzahlBelegterParkplaetze(), "Es sollten genau 350 Parkplaetze belegt sein.");
@@ -78,7 +83,7 @@ public class ParkhausServiceTest {
         List<Etage> etagen = service.parkhaus().getEtagen();
         Etage ersteEtage = etagen.getFirst();
 
-        // Belege jeden zweiten Parkplatz (Plätze 0, 2, 4, ...) – keine 3 aufeinanderfolgenden Plätze frei
+        // Belege jeden zweiten model.Parkplatz (Plätze 0, 2, 4, ...) – keine 3 aufeinanderfolgenden Plätze frei
         List<Parkplatz> parkplaetze = ersteEtage.getParkplaetze();
         for (int i = 0; i < parkplaetze.size(); i += 2) {
             parkplaetze.get(i).setStatus(ParkplatzStatus.BELEGT);
@@ -92,7 +97,7 @@ public class ParkhausServiceTest {
 
         // Sicherstellen, dass keiner der zugewiesenen Plätze vorher belegt war
         for (Parkplatz p : zugewiesene) {
-            assertFalse(p.istFrei(), "Der zugewiesene Parkplatz sollte nun belegt sein.");
+            assertFalse(p.istFrei(), "Der zugewiesene model.Parkplatz sollte nun belegt sein.");
         }
 
         // Sicherstellen, dass die Plätze **nicht** zusammenhängend sind (Abstand > 1)
