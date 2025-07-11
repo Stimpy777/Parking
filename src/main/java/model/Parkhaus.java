@@ -17,6 +17,7 @@ public class Parkhaus {
         List<Etage> sortierteEtagen = new ArrayList<>(etagen);
         sortierteEtagen.sort(Comparator.comparingDouble(Etage::berechneAuslastung));
 
+        // 1. connected parking lots
         for (Etage etage : sortierteEtagen) {
             List<Parkplatz> gruppe = etage.findeZusammenhaengendeFreiePlaetze(anzahl);
             if (!gruppe.isEmpty()) {
@@ -24,16 +25,19 @@ public class Parkhaus {
                 return gruppe;
             }
         }
-        // if there are no contiguous pitches, then just individual ones
+
+        // 2. unconnected parking lots
+        List<Parkplatz> verstreutePlaetze = new ArrayList<>();
         for (Etage etage : sortierteEtagen) {
-            List<Parkplatz> gruppe = etage.findeFreiePlaetze(anzahl);
-            if (!gruppe.isEmpty()) {
-                gruppe.sort(Comparator.comparingInt(Parkplatz::getEntfernungZumAusgang));
-                return gruppe;
+            List<Parkplatz> freiePlaetze = etage.findeAlleFreienPlaetze();
+            freiePlaetze.sort(Comparator.comparingInt(Parkplatz::getEntfernungZumAusgang));
+            for (Parkplatz platz : freiePlaetze) {
+                verstreutePlaetze.add(platz);
+                if (verstreutePlaetze.size() == anzahl) {
+                    return verstreutePlaetze;
+                }
             }
         }
-
-
         return Collections.emptyList();
     }
 }

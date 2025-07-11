@@ -16,7 +16,7 @@ public record ParkingService(@Getter Parkhaus parkhaus) {
         List<Etage> etagen = new ArrayList<>();
         int etagenAnzahl = 7;
         int plaetzeProEtage = 50;
-        int platzNummerGlobal = 0;
+        int platzNummerGlobal = 1;
         Random random = new Random();
 
         for (int etageNummer = 0; etageNummer < etagenAnzahl; etageNummer++) {

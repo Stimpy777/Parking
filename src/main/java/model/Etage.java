@@ -32,19 +32,16 @@ public class Etage {
         return Collections.emptyList();
     }
 
-    public List<Parkplatz> findeFreiePlaetze(int anzahl) {
+    public List<Parkplatz> findeAlleFreienPlaetze() {
         List<Parkplatz> gruppe = new ArrayList<>();
-        int foundAmount = 0;
-        for (Parkplatz p : parkplaetze){
-            if (p.istFrei()){
+        for (Parkplatz p : parkplaetze) {
+            if (p.istFrei()) {
                 gruppe.add(p);
-                foundAmount++;
-            }
-            if (foundAmount == anzahl){
-                return  gruppe;
             }
         }
-
+        if (!gruppe.isEmpty()) {
+            return gruppe;
+        }
         return Collections.emptyList();
     }
 
