@@ -22,6 +22,16 @@ public class Parkhaus {
                 return gruppe;
             }
         }
+        // if there are no contiguous pitches, then just individual ones
+        for (Etage etage : sortierteEtagen) {
+            List<Parkplatz> gruppe = etage.findeFreiePlaetze(anzahl);
+            if (!gruppe.isEmpty()) {
+                gruppe.sort(Comparator.comparingInt(Parkplatz::getEntfernungZumAusgang));
+                return gruppe;
+            }
+        }
+
+
         return Collections.emptyList();
     }
 }

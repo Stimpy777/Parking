@@ -37,13 +37,11 @@ Der Service bietet Methoden zum Parken von Fahrzeugen und zum Verlassen des Park
 gibt es Methoden zur Anzeige der Anzahl der freien sowie belegten Parkplätzen. 
 
 Zum Testen der Anwendung gibt es eine Main-Klasse mit einer main()-Methode, die beispielhaft die
-Verwendung und Funktionsweise der API veranschaulicht.  
-
+Verwendung und Funktionsweise der API veranschaulicht. Außerdem verfügt die Anwendung über eine Gui.
 ## Dokumentation:
 Umgebung:  
 - Java 21
 - Apache-Maven 3.
-
 Kompilierung:  
 `mvn clean compile`
 

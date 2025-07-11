@@ -30,6 +30,22 @@ public class Etage {
         return Collections.emptyList();
     }
 
+    public List<Parkplatz> findeFreiePlaetze(int anzahl) {
+        List<Parkplatz> gruppe = new ArrayList<>();
+        int foundAmount = 0;
+        for (Parkplatz p : parkplaetze){
+            if (p.istFrei()){
+                gruppe.add(p);
+                foundAmount++;
+            }
+            if (foundAmount == anzahl){
+                return  gruppe;
+            }
+        }
+
+        return Collections.emptyList();
+    }
+
     public double berechneAuslastung() {
         long frei = parkplaetze.stream().filter(Parkplatz::istFrei).count();
         return 1.0 - ((double) frei / parkplaetze.size());

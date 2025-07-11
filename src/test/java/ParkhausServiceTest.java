@@ -71,4 +71,42 @@ public class ParkhausServiceTest {
         // Zustand erneut prüfen
         assertTrue(plaetze.stream().allMatch(Parkplatz::istFrei));
     }
+
+    @Test
+    public void testFallbackAufEinzelplaetzeWennKeineGruppeVerfuegbar() {
+        // Belege gezielt alle Plätze so, dass keine zusammenhängende Gruppe von 3 existiert
+        List<Etage> etagen = service.parkhaus().getEtagen();
+        Etage ersteEtage = etagen.getFirst();
+
+        // Belege jeden zweiten Parkplatz (Plätze 0, 2, 4, ...) – keine 3 aufeinanderfolgenden Plätze frei
+        List<Parkplatz> parkplaetze = ersteEtage.getParkplaetze();
+        for (int i = 0; i < parkplaetze.size(); i += 2) {
+            parkplaetze.get(i).setStatus(ParkplatzStatus.BELEGT);
+        }
+
+        // Nun versuche, 3 Fahrzeuge zu parken
+        List<Parkplatz> zugewiesene = service.parkeFahrzeuge(3);
+
+        // Es sollten 3 Parkplätze zugewiesen werden, obwohl keine zusammenhängenden vorhanden sind
+        assertEquals(3, zugewiesene.size(), "Es sollten 3 einzelne Parkplätze gefunden werden.");
+
+        // Sicherstellen, dass keiner der zugewiesenen Plätze vorher belegt war
+        for (Parkplatz p : zugewiesene) {
+            assertFalse(p.istFrei(), "Der zugewiesene Parkplatz sollte nun belegt sein.");
+        }
+
+        // Sicherstellen, dass die Plätze **nicht** zusammenhängend sind (Abstand > 1)
+        boolean zusammenhaengend = true;
+        for (int i = 1; i < zugewiesene.size(); i++) {
+            int diff = Math.abs(
+                    ersteEtage.getParkplaetze().indexOf(zugewiesene.get(i)) -
+                            ersteEtage.getParkplaetze().indexOf(zugewiesene.get(i - 1))
+            );
+            if (diff != 1) {
+                zusammenhaengend = false;
+                break;
+            }
+        }
+        assertFalse(zusammenhaengend, "Die zugewiesenen Parkplätze sollten nicht zusammenhängend sein.");
+    }
 }
