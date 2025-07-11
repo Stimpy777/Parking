@@ -7,14 +7,11 @@ public class ParkhausGui extends JFrame {
     private final ParkhausService service = ParkhausService.erzeugeStandardParkhaus();
     private final JLabel statusLabel = new JLabel();
     private final JPanel parkhausPanel = new JPanel();
-    private final JScrollPane scrollPane = new JScrollPane(parkhausPanel,
-            JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-            JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 
     private final JComboBox<Integer> cmbAmount = new JComboBox<>(new Integer[]{1,2,3,4,5,6,7,8,9,10});
 
     public ParkhausGui() {
-        setTitle("Parkhaus Visualisierung");
+        setTitle("Intelligente Parkplatzsuche");
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setSize(1400, 500);
         setLocationRelativeTo(null);
@@ -34,6 +31,9 @@ public class ParkhausGui extends JFrame {
         parkenButton.addActionListener(this::handleEinparken);
 
         add(topPanel, BorderLayout.NORTH);
+        JScrollPane scrollPane = new JScrollPane(parkhausPanel,
+                JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
+                JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         add(scrollPane, BorderLayout.CENTER);
 
         updateView();
@@ -42,7 +42,9 @@ public class ParkhausGui extends JFrame {
     }
 
     private void handleEinparken(ActionEvent e) {
-        int anzahl = (Integer) cmbAmount.getSelectedItem();
+        Integer selected = (Integer) cmbAmount.getSelectedItem();
+        int anzahl = (selected != null) ? selected : 1;  // fallback to 1 or any default
+
         try {
             service.parkeFahrzeuge(anzahl);
         } catch (IllegalStateException ex) {
