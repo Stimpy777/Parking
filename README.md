@@ -1,5 +1,6 @@
 # Parking
 
+## Anforderungen:  
 „Hausaufgabe“ - Intelligente Parkplatzsuche
 Hintergrund:
 Stell dir vor, es ist ein System für ein großes Parkhaus mit mehreren Etagen und Stellplätzen zu entwickeln.
@@ -31,11 +32,29 @@ Anforderungen:
    Terminvorbereitung:
    In unserem nächsten Termin möchten wir gern über deinen Lösungsansatz sprechen. Bereite dich darauf vor,
    die Datenstruktur, deine Implementierungsstrategie und Designentscheidungen zu besprechen.
-
-# Lösung:
+---
+## Lösung:
 Die Klasse Parkhausservice bietet eine API mit der ein solches Parkhaus erzeugt werden kann. 
 Der Service bietet Methoden zum Parken von Fahrzeugen und zum Verlassen des Parkhauses. Zusätzlich
-gibt es Methoden zur Anzeige der Anzahl der freien sowie belegten Parkplätzen
+gibt es Methoden zur Anzeige der Anzahl der freien sowie belegten Parkplätzen. 
 
-Testen:
-mvn clean test
+Zum Testen der Anwendung gibt es eine Main-Klasse mit einer main()-Methode, die beispielhaft die
+Verwendung und Funktionsweise der API veranschaulicht.  
+---
+## Dokumentation:
+
+Umgebung:  
+- Java 21
+- Apache-Maven 3.
+
+Kompilierung:  
+`mvn clean compile`
+
+Starten der Tests:  
+`mvn clean verify`
+
+Paketieren:  
+`mvn clean package`
+
+Starten der Anwendung:  
+`java -jar .\target\parking-1.0.0.jar`
