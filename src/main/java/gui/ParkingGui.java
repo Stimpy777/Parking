@@ -22,8 +22,13 @@ public class ParkingGui extends JFrame {
     private final JCheckBox belegCheckBox = new JCheckBox("Beleg");
     private final List<String> historie = new ArrayList<>();
     private int buchungsnummer = 1;
+    private final DateTimeFormatter formatter= DateTimeFormatter.ofPattern("yyyy-MM-dd 'um' HH:mm:ss");
 
     public ParkingGui() {
+        initGui();
+    }
+
+    private void initGui() {
         setTitle("Intelligente Parkplatzsuche");
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setSize(1400, 500);
@@ -42,7 +47,7 @@ public class ParkingGui extends JFrame {
         topPanel.add(btnHistorie); // <<<<< NEU
 
         btnPark.addActionListener(this::handleEinparken);
-        btnHistorie.addActionListener(e -> zeigeHistorieDialog()); // <<<<< NEU
+        btnHistorie.addActionListener(e -> zeigeHistorieDialog());
 
         add(topPanel, BorderLayout.NORTH);
 
@@ -77,8 +82,7 @@ public class ParkingGui extends JFrame {
 
     private void historieAnlegen(List<Parkplatz> belegtePlaetze) {
         LocalDateTime jetzt = LocalDateTime.now();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd 'um' HH:mm:ss");
-        historie.add(String.format("Buchungsnummer: %s  | Anzahl: %s | Datum: %s Uhr ", buchungsnummer++, belegtePlaetze.size(),jetzt.format(formatter) ));
+        historie.add(String.format("%s - Buchung: %s | Gesamt: %s ",jetzt.format(formatter), buchungsnummer++, belegtePlaetze.size() ));
         for (Parkplatz platz : belegtePlaetze) {
             String eintrag = String.format("Platz #%s ", platz.getNummer());
             historie.add(eintrag);
@@ -176,6 +180,8 @@ public class ParkingGui extends JFrame {
         btn.addActionListener(ev -> {
             if (!platz.istFrei()) {
                 service.verlasseParkplatz(platz);
+                LocalDateTime jetzt = LocalDateTime.now();
+                historie.add(String.format("%s - Frei #%s", jetzt.format(formatter) ,  platz.getNummer() ));
                 ansichtAktualisieren();
             }
         });
