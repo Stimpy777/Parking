@@ -63,7 +63,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>ParkingMain</mainClass>
+                            <mainClass>ParkhausGui</mainClass>
                         </manifest>
                     </archive>
                 </configuration>
