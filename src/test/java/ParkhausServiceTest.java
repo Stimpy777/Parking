@@ -56,4 +56,19 @@ public class ParkhausServiceTest {
         IllegalStateException exception = assertThrows(IllegalStateException.class, () -> service.parkeFahrzeuge(1));
         assertEquals("Keine passenden Parkplätze gefunden.", exception.getMessage());
     }
+
+    @Test
+    public void testParkenUndVerlassen() {
+        List<Parkplatz> plaetze = service.parkeFahrzeuge(2);
+        assertEquals(2, plaetze.size());
+
+        // Zustand prüfen
+        assertTrue(plaetze.stream().noneMatch(Parkplatz::istFrei));
+
+        // Ausparken
+        plaetze.forEach(p -> service.verlasseParkplatz(p));
+
+        // Zustand erneut prüfen
+        assertTrue(plaetze.stream().allMatch(Parkplatz::istFrei));
+    }
 }
