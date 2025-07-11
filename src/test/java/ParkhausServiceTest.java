@@ -1,14 +1,22 @@
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.List;
 import java.util.stream.IntStream;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 public class ParkhausServiceTest {
+
+    private ParkhausService service;
+
+    @BeforeEach
+    public void setUp() {
+        service = ParkhausService.erzeugeStandardParkhaus();
+    }
 
     @Test
     public void testErzeugeStandardParkhaus() {
-        ParkhausService service = ParkhausService.erzeugeStandardParkhaus();
         Parkhaus parkhaus = service.parkhaus();
         List<Etage> etagen = parkhaus.getEtagen();
 
@@ -27,10 +35,7 @@ public class ParkhausServiceTest {
     }
 
     @Test
-    public void testeVollbelegung(){
-        ParkhausService service = ParkhausService.erzeugeStandardParkhaus();
-
-
+    public void testeVollbelegung() {
         IntStream.range(0, 350).forEach(i -> {
             List<Parkplatz> plaetze = service.parkeFahrzeuge(1);
             assertEquals(1, plaetze.size(), "Es sollte genau 1 Parkplatz zugewiesen werden.");
@@ -40,21 +45,15 @@ public class ParkhausServiceTest {
     }
 
     @Test
-    public void testeUeberbelegung(){
-        ParkhausService service = ParkhausService.erzeugeStandardParkhaus();
-        // das Parkhaus voll belegen
+    public void testeUeberbelegung() {
         IntStream.range(0, 7).forEach(i -> {
             List<Parkplatz> plaetze = service.parkeFahrzeuge(50);
-            assertEquals(50, plaetze.size(), "Es sollten genau 50 Parkplatz zugewiesen werden.");
+            assertEquals(50, plaetze.size(), "Es sollten genau 50 Parkplätze zugewiesen werden.");
         });
-        // ist es voll?
+
         assertEquals(350, service.getAnzahlBelegterParkplaetze(), "Es sollten genau 350 Parkplaetze belegt sein.");
-        // auf Exception pruefen
+
         IllegalStateException exception = assertThrows(IllegalStateException.class, () -> service.parkeFahrzeuge(1));
         assertEquals("Keine passenden Parkplätze gefunden.", exception.getMessage());
-
-
     }
-
 }
-
