@@ -3,7 +3,7 @@ import service.ParkingService;
 public class ParkingMain {
 
     public static void main(String[] args) {
-        ParkingService service = ParkingService.erzeugeStandardParkhaus();
+        ParkingService service = ParkingService.erzeugeDemoParkhaus();
 
         System.out.println("==> Initialzustand des Parkhauses:");
         printStatus(service);

@@ -12,7 +12,7 @@ import java.util.Random;
 
 public record ParkingService(@Getter Parkhaus parkhaus) {
 
-    public static ParkingService erzeugeStandardParkhaus() {
+    public static ParkingService erzeugeDemoParkhaus() {
         List<Etage> etagen = new ArrayList<>();
         int etagenAnzahl = 7;
         int plaetzeProEtage = 50;
@@ -45,12 +45,10 @@ public record ParkingService(@Getter Parkhaus parkhaus) {
         return plaetze;
     }
 
-    // sinnvoll für die weitere Entwicklung
     public void verlasseParkplatz(Parkplatz parkplatz) {
         parkplatz.setStatus(ParkplatzStatus.FREI);
     }
 
-    // sinnvoll für die Anzeige freier Plätze z.B. auf Werbetafeln
     public long getAnzahlFreierParkplaetze() {
         return parkhaus.getEtagen().stream()
                 .flatMap(etage -> etage.getParkplaetze().stream())

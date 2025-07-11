@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 
 public class ParkingGui extends JFrame {
 
-    private final ParkingService service = ParkingService.erzeugeStandardParkhaus();
+    private final ParkingService service = ParkingService.erzeugeDemoParkhaus();
     private final JPanel parkhausPanel = new JPanel();
     private final JComboBox<Integer> cmbAmount = new JComboBox<>(new Integer[]{1, 2, 3, 4, 5, 10, 100});
     private final JCheckBox belegCheckBox = new JCheckBox("Beleg");

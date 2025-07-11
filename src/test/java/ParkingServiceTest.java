@@ -17,11 +17,11 @@ public class ParkingServiceTest {
 
     @BeforeEach
     public void setUp() {
-        service = ParkingService.erzeugeStandardParkhaus();
+        service = ParkingService.erzeugeDemoParkhaus();
     }
 
     @Test
-    public void testErzeugeStandardParkhaus() {
+    public void testErzeugeDemoParkhaus() {
         Parkhaus parkhaus = service.parkhaus();
         List<Etage> etagen = parkhaus.getEtagen();
 
@@ -30,7 +30,7 @@ public class ParkingServiceTest {
         int gesamtParkplaetze = 0;
         for (Etage etage : etagen) {
             List<Parkplatz> plaetze = etage.getParkplaetze();
-            assertEquals(50, plaetze.size(), "Jede model.Etage sollte genau 50 Parkplaetze haben.");
+            assertEquals(50, plaetze.size(), "Jede Etage sollte genau 50 Parkplaetze haben.");
             long freiePlaetze = plaetze.stream().filter(Parkplatz::istFrei).count();
             assertEquals(50, freiePlaetze, "Alle Parkplaetze sollten initial frei sein.");
             gesamtParkplaetze += plaetze.size();
@@ -43,7 +43,7 @@ public class ParkingServiceTest {
     public void testeVollbelegung() {
         IntStream.range(0, 350).forEach(i -> {
             List<Parkplatz> plaetze = service.parkeFahrzeuge(1);
-            assertEquals(1, plaetze.size(), "Es sollte genau 1 model.Parkplatz zugewiesen werden.");
+            assertEquals(1, plaetze.size(), "Es sollte genau 1 Parkplatz zugewiesen werden.");
         });
 
         assertEquals(350, service.getAnzahlBelegterParkplaetze(), "Es sollten genau 350 Parkplaetze belegt sein.");
@@ -100,7 +100,7 @@ public class ParkingServiceTest {
             assertFalse(p.istFrei(), "Der zugewiesene model.Parkplatz sollte nun belegt sein.");
         }
 
-        // Sicherstellen, dass die Plätze **nicht** zusammenhängend sind (Abstand > 1)
+        // Sicherstellen, dass die Plätze nicht zusammenhängend sind (Abstand > 1)
         boolean zusammenhaengend = true;
         for (int i = 1; i < zugewiesene.size(); i++) {
             int diff = Math.abs(
