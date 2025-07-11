@@ -41,7 +41,8 @@ Verwendung und Funktionsweise der API veranschaulicht. Außerdem verfügt die An
 ## Dokumentation:
 Umgebung:  
 - Java 21
-- Apache-Maven 3.
+- Apache-Maven 3.  
+
 Kompilierung:  
 `mvn clean compile`
 
