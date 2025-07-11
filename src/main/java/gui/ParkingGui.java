@@ -7,6 +7,7 @@ import service.ParkingService;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.awt.image.BufferedImage;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -169,24 +170,89 @@ public class ParkingGui extends JFrame {
         }
         return etagenPanel;
     }
+    private ImageIcon createCarFrontViewIcon() {
+        BufferedImage img = new BufferedImage(18, 18, BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g2 = img.createGraphics();
+        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+        // Karosserie (Hauptkörper)
+        g2.setColor(new Color(220, 0, 0)); // Rot
+        g2.fillRoundRect(4, 6, 10, 8, 4, 4);
+
+        // Windschutzscheibe
+        g2.setColor(new Color(180, 220, 255)); // Hellblau
+        g2.fillRoundRect(5, 4, 8, 4, 3, 3);
+
+        // Scheinwerfer
+        g2.setColor(Color.WHITE);
+        g2.fillOval(3, 7, 3, 3);  // Linker Scheinwerfer
+        g2.fillOval(12, 7, 3, 3); // Rechter Scheinwerfer
+
+        // Scheinwerfer-Lichtkegel (gelb)
+        g2.setColor(Color.YELLOW);
+        g2.fillOval(3, 8, 2, 2);
+        g2.fillOval(13, 8, 2, 2);
+
+        // Stoßstange
+        g2.setColor(new Color(100, 100, 100)); // Grau
+        g2.fillRect(2, 14, 14, 1);
+
+        // Kennzeichen
+        g2.setColor(Color.WHITE);
+        g2.fillRect(7, 12, 4, 2);
+        g2.setColor(Color.BLACK);
+        g2.drawRect(7, 12, 4, 2);
+
+        // Reifen/Räder (von unten sichtbar)
+        g2.setColor(Color.BLACK);
+        g2.fillRect(2, 15, 3, 2);  // Linker Reifen
+        g2.fillRect(13, 15, 3, 2); // Rechter Reifen
+
+        // Felgen-Details
+        g2.setColor(new Color(180, 180, 180)); // Silber
+        g2.fillOval(2, 15, 3, 2);
+        g2.fillOval(13, 15, 3, 2);
+
+        // Umriss für bessere Erkennbarkeit
+        g2.setColor(Color.BLACK);
+        g2.setStroke(new BasicStroke(0.8f));
+        g2.drawRoundRect(4, 6, 10, 8, 4, 4); // Karosserie-Umriss
+        g2.drawRoundRect(5, 4, 8, 4, 3, 3);  // Windschutzscheibe-Umriss
+
+        // Motorhaube-Linie
+        g2.setColor(new Color(150, 0, 0)); // Dunkleres Rot
+        g2.drawLine(6, 10, 12, 10);
+
+        g2.dispose();
+        return new ImageIcon(img);
+    }
 
     private JButton erzeugePlatzButton(Etage etage, Parkplatz platz) {
         JButton btn = new JButton();
+
+        if (!platz.istFrei()) {
+            btn.setIcon(createCarFrontViewIcon());
+        } else {
+            btn.setIcon(null);
+        }
         btn.setOpaque(true);
+        btn.setContentAreaFilled(true);
         btn.setBorderPainted(false);
-        btn.setBackground(platz.istFrei() ? Color.GREEN : Color.RED);
+        btn.setBackground(Color.WHITE);
         btn.setPreferredSize(new Dimension(20, 20));
         btn.setToolTipText(String.format("Etage %d - Platz #%s", etage.getNummer(), platz.getNummer()));
+
         btn.addActionListener(ev -> {
             if (!platz.istFrei()) {
                 service.verlasseParkplatz(platz);
                 LocalDateTime jetzt = LocalDateTime.now();
-                historie.add(String.format("%s - Frei #%s", jetzt.format(formatter) ,  platz.getNummer() ));
+                historie.add(String.format("%s - Frei #%s", jetzt.format(formatter), platz.getNummer()));
                 ansichtAktualisieren();
             }
         });
         return btn;
     }
+
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(ParkingGui::new);
